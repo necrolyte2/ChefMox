@@ -1,4 +1,4 @@
-from subprocess import Popen, PIPE, call
+from subprocess import Popen, PIPE, call, STDOUT
 import os
 
 class MissingSoftwareException( Exception ):
@@ -7,24 +7,12 @@ class MissingSoftwareException( Exception ):
 class vmbuilder:
     def __init__( self, hypervisor = 'kvm', distro = 'ubuntu', options = None, vmbuilder_path = '/usr/bin/vmbuilder' ):
         """
-        sudo vmbuilder kvm ubuntu \
-        --rootsize=$((1024*8)) \
-        --swapsize=$((2*1024)) \
-        --user=install \
-        --pass=123457 \
-        --suit=lucid \
-        --flavour=virtual \
-        --variant=minbase \
-        --mirror=http://ubuntu.osuosl.org/ubuntu \
-        --arch=i386 \
-        --hostname=acg01 \
-        --domain=msu.montana.edu \
-        --ip=153.90.237.133 \
-        --gw=153.90.237.254 \
-        --mask=255.255.254.0 \
-        --addpkg=sudo \
-        --addpkg=acpid \
-        --timezone=America/Denver
+            PARAMS:
+             - options should be a dictionary keyed by the same options that vmbuilder uses. The only exception is
+                addpkg which the value is a list of additional packages to install to the base system
+             - hypervisor is one of the following kvm, xen, vmw6, vmserver
+             - distro can only have the value of ubuntu as of right now
+             - vmbuilder_path is the path to the vmbuilder executable
         """
         self.hypervisor = 'kvm'
         self.distro = 'ubuntu'
@@ -32,12 +20,9 @@ class vmbuilder:
             self.opts = { 
                  'rootsize': '8192',
                  'swapsize': '2048',
-                 'user': 'install',
-                 'pass': '123457',
                  'suit': 'lucid',
                  'flavour': 'virtual',
                  'variant': 'minbase',
-                 'mirror': 'http://ubuntu.osuosl.org/ubuntu',
                  'arch': 'i386',
                  'addpkg': ['sudo', 'acpid'],
                  'timezone': 'America/Denver',
@@ -53,7 +38,7 @@ class vmbuilder:
         return os.path.exists( self.vmbuilder_path )
 
     def _isRoot( self ):
-        return os.getlogin() == 'root'
+        return os.getuid() == 0
 
     def _build_opts( self ):
         """
@@ -68,6 +53,16 @@ class vmbuilder:
                     opts.append( "--%s=%s" % (k,pkg) )
         return opts
 
+    def vm_image_path( self ):
+        base_path = os.path.abspath( '.' )
+        vm_path = os.path.join( base_path, 'ubuntu-kvm' )
+        files = os.listdir( vm_path )
+        vm_name = ''
+        for f in files:
+            if os.path.splitext( f )[1] == '.qcow2':
+                vm_name = f
+        return os.path.join( vm_path, vm_name )
+
     def setOpt( self, opt, value ):
         self.opts[opt] = value
 
@@ -75,5 +70,7 @@ class vmbuilder:
         return [self.vmbuilder_path, self.hypervisor, self.distro] + self._build_opts( )
 
     def build_vm( self ):
-        p = Popen( self.get_build_command(), stdout = PIPE, stderr = PIPE )
-        return p.communicate()
+        if not self._isRoot( ):
+            raise
+        p = Popen( self.get_build_command(), stdout = PIPE, stderr = STDOUT )
+        return p

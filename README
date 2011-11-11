@@ -2,18 +2,28 @@ ChefMox is a web based management tool to link Chef management with Proxmox PVE
 
 REQUIREMENTS
 ===========
-PyChef
-Django
+PyChef (Installed by pip below)
+Django (Installed by pip below)
+Vmbuilder (https://launchpad.net/vmbuilder or apt-get install vmbuilder)
+
+NOTES
+=====
+It is not neccesary to use virtualenv, but I recommend it since it is so easy and keeps everything together.
+Assuming you want to use virtualenv, the following INSTALL section stays the same, however, you will need to make sure
+you source the activate file before you run the INSTALL section.
 
 
 INSTALL
 =======
 1) pip install -r requirements.txt
+2) Install PyVmBuilder
+   2.1) cd PyVmBuilder; python setup.py install
 
 
 TROUBLESHOOTING
 ===============
 
-It says that I'm missing libcrypto but I'm pretty sure it is installed?
-  You  may need to just link your libcrypto module to libcrypto.so inside of your library directory
-  On Ubuntu you should be able to just find . -iname "libcrypto*" to locate your library and link that version to the same directory but using the name libcrypto.so
+--- It says that I'm missing libcrypto but I'm pretty sure it is installed? ---
+You  may need to just link your libcrypto module to libcrypto.so inside of your library directory
+On Ubuntu you should be able to just find . -iname "libcrypto*" to locate your library and link that version to the same 
+directory but using the name libcrypto.so.
