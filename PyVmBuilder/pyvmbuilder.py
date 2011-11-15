@@ -24,8 +24,8 @@ class vmbuilder:
                  'flavour': 'virtual',
                  'variant': 'minbase',
                  'arch': 'i386',
-                 'addpkg': ['sudo', 'acpid'],
-                 'timezone': 'America/Denver',
+                 'addpkg': ['gpgv', 'ubuntu-keyring', 'libterm-readline-gnu-perl', 'sudo', 'acpid', 'apt-utils', 'openssh-server'],
+                 'dest': "%s-%s" % (self.distro, self.hypervisor)
                 }
         else:
             self.opts = options
@@ -54,8 +54,11 @@ class vmbuilder:
         return opts
 
     def vm_image_path( self ):
+        """
+            Return the path to the generated vm image. This has to be run after build_vm
+        """
         base_path = os.path.abspath( '.' )
-        vm_path = os.path.join( base_path, 'ubuntu-kvm' )
+        vm_path = os.path.join( base_path, self.opts['dest'] )
         files = os.listdir( vm_path )
         vm_name = ''
         for f in files:
@@ -64,13 +67,20 @@ class vmbuilder:
         return os.path.join( vm_path, vm_name )
 
     def setOpt( self, opt, value ):
+        """
+            Allows you to set any option that vmbuilder has by supplying the option name(long name not short)
+            and the value for that option.
+        """
         self.opts[opt] = value
 
     def get_build_command( self ):
         return [self.vmbuilder_path, self.hypervisor, self.distro] + self._build_opts( )
 
     def build_vm( self ):
+        """ Build the vm using the options given """
         if not self._isRoot( ):
             raise
-        p = Popen( self.get_build_command(), stdout = PIPE, stderr = STDOUT )
+        cmd = self.get_build_command()
+        print "Building VM with %s" % cmd
+        p = Popen( cmd, stdout = PIPE, stderr = STDOUT )
         return p

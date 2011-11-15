@@ -5,6 +5,7 @@ REQUIREMENTS
 PyChef (Installed by pip below)
 Django (Installed by pip below)
 Vmbuilder (https://launchpad.net/vmbuilder or apt-get install vmbuilder)
+Chef Server
 
 NOTES
 =====
@@ -18,6 +19,7 @@ INSTALL
 1) pip install -r requirements.txt
 2) Install PyVmBuilder
    2.1) cd PyVmBuilder; python setup.py install
+3) Setup a client in chef for ChefMox to use in root's homedirectory
 
 
 TROUBLESHOOTING
