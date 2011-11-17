@@ -1,0 +1,4 @@
+# This is a fixed example do not change
+Host master.example.com
+    User testuser
+    IdentityFile ~/.ssh/id_dsa

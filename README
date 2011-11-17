@@ -4,6 +4,8 @@ REQUIREMENTS
 ===========
 PyChef (Installed by pip below)
 Django (Installed by pip below)
+Paramiko (Installed by pip below)
+Python Development files(apt-get install python-dev)
 Vmbuilder (https://launchpad.net/vmbuilder or apt-get install vmbuilder)
 Chef Server
 

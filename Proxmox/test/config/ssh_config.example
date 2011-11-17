@@ -1,0 +1,4 @@
+# This should be a working example for your setup
+Host master.example.com
+    User some_user
+    IdentityFile /path/to/id_dsa

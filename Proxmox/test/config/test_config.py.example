@@ -1,0 +1,7 @@
+# Sets up examples to use that actually point somewhere usefull(Real world examples)
+proxmox_config = /path/to/proxmox.cfg
+ssh_config = /path/to/ssh_config
+
+proxmox_config_fixture = /path/to/proxmox_fixture.cfg
+ssh_config_fixture = /path/to/ssh_config_fixture
+pve_cluster_config_fixture = /path/to/pve_config_fixture

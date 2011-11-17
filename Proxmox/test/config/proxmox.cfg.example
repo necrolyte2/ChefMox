@@ -1,0 +1,10 @@
+# This should be a working example for your setup
+
+# FQDN of the proxmox master
+cluster_master: master.example.com
+
+# Full path to the cluster.cfg or blank if you want to fetch from the Proxmox Master
+pve_config: /path/to/cluster.cfg
+
+# The path your ssh config file
+ssh_config_file: /path/to/ssh_config
