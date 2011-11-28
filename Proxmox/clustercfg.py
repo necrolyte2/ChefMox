@@ -6,13 +6,24 @@ class ClusterCfg( PVECommand ):
             Call super and connect the client
         """
         super( ClusterCfg, self ).__init__( *args, **kwargs )
+        # The cluster config we will cache so we don't have to parse every time it is requested
+        self._cluster_config = None
+
+    @property
+    def cluster_config( self ):
+        if not self._cluster_config:
+            self._read_cluster_config()
+        return self._cluster_config
 
     def _read_cluster_config( self ):
         """
             Reads the cluster config file from either locally or remote host
+            If the pve_config variable is set in the proxmox.cfg file the cluster
+            configuration will be read from the file that is indicated.
+            If there is nothing set for pve_config then the cluster config will
+            be read from the cluster_master in the proxmox.cfg file
 
-            @return A dictionary containing the cluster.cfg
-            @rtype dict
+            Stores the config in _cluster_config which can be retrieved using the cluster_config property
         """
         cfg = None
         cfg_path = self.config.proxmox_config.get( 'pve_config' )
@@ -23,11 +34,12 @@ class ClusterCfg( PVECommand ):
         else:
             # We will need to connect to do this operation
             self.connect()
-            with self.open_file( '/etc/pve/cluster.cfg' ) as fh:
-                cfg = fh.readlines()
+            self.open_file( '/etc/pve/cluster.cfg' )
+            cfg = self.fh.readlines()
+            self.close_file()
 
         # Strip the newlines from each entry and return the parsed dict
-        return self._parse_cluster_config( [x.strip() for x in cfg] )
+        self._cluster_config = self._parse_cluster_config( [x.strip() for x in cfg] )
 
     def _parse_cluster_config( self, cfg ):
         """

@@ -1,3 +1,9 @@
 *.pyc
 *.swp
-PyVMBuilder/Build
+PyVmBuilder/build/
+Proxmox/test/config/proxmox.cfg
+Proxmox/test/config/ssh_config
+Proxmox/test/config/test_config.py
+config/
+distribute-0.6.10.tar.gz
+test.py

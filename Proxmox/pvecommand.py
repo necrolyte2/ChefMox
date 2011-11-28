@@ -1,5 +1,6 @@
 from paramiko import SSHClient, AutoAddPolicy, SSHConfig
 from pveconfig import PVEConfig
+from pveexceptions import NoFileOpenedException
 import os
 
 class PVECommand(object):
@@ -16,6 +17,7 @@ class PVECommand(object):
             self.config = pveconfig
         self.config.autoconfigure()
         self._sftp = None
+        self._fh = None
 
     def connect( self ):
         """ Connect to the server defined in the config files """
@@ -76,6 +78,19 @@ class PVECommand(object):
         """
         self._open_sftp()
         self._fh = self._sftp.open( filep, mode )
+
+    @property
+    def fh( self ):
+        """
+            Gives access to the file handle of the opened file if opened otherwise
+            throws exception
+
+            @return file handle
+            @rtype C{file_handle}
+        """
+        if not self._fh == None:
+            return self._fh
+        raise NoFileOpenedException( "No file has been previously opened" )
 
     def close_file( self ):
         """
